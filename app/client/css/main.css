@@ -59,7 +59,7 @@ span.lang {
 }
 .text {
   font-size: 1.5em;
-  padding: 0;
+  padding: 1em 0;
 }
 
 .none {
@@ -72,7 +72,7 @@ span.lang {
 
 .audio {
   text-align: center;
-  padding: 1em 0 0.4em 0;
+  padding: 1em 0;
   margin: auto;
 }
 
