@@ -2,8 +2,6 @@ import m from 'mithril';
 
 var addSection = function(sections, phrase) {
     let lastSection = sections[sections.length - 1];
-    if (!lastSection) {
-    }
     if (!lastSection || lastSection.name != phrase.section) {
         lastSection = {
             name: phrase.section,
@@ -12,6 +10,7 @@ var addSection = function(sections, phrase) {
         sections.push(lastSection);
     }
     lastSection.phrases.push(phrase);
+    return lastSection;
 };
 
 export default {
@@ -22,7 +21,8 @@ export default {
         let previous = null;
 
         list.forEach((value) => {
-            addSection(sections, value);
+            let section = addSection(sections, value);
+            value.section = section;
             index[value.id] = value;
             if (previous) {
                 value.previous = previous;

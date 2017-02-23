@@ -65,8 +65,20 @@ var renderLangButtons = function(ctrl, phrase) {
     ]);
 };
 
+var renderRandomButton = function(ctrl) {
+    let redirectRandom = function() {
+        let phrases = ctrl.duo().phrases;
+        let random = phrases[Math.floor(Math.random() * phrases.length)];
+        m.route(`/${ctrl.lang()}/phrase/${random.id}`);
+    }
+    return m('.phase-navigation', m('a.glyphicon.glyphicon-random', {
+        href: '#',
+        onclick: redirectRandom
+    }));
+}
+
 var renderNavigation = function(ctrl, phrase, direction, caption) {
-    let navigation = m('.col-xs-6.phase-navigation',
+    let navigation = m('.phase-navigation',
         { class: direction },
         caption
     );
@@ -79,15 +91,43 @@ var renderNavigation = function(ctrl, phrase, direction, caption) {
     return navigation;
 }
 
+var renderSectionNavigation = function(ctrl, phrase, direction, caption) {
+    let navigation = m('.phase-navigation',
+        { class: direction },
+        caption
+    );
+    let targetPhrase = null;
+    let phrases = phrase.section.phrases;
+    if (direction == 'previous') {
+        targetPhrase = phrases[0];
+    } else {
+        targetPhrase = phrases[phrases.length - 1];
+    }
+    if (phrase[direction]) {
+        navigation = m('a',
+            { href: `/${ctrl.lang()}/phrase/${targetPhrase.id}`, config: m.route },
+            navigation
+        )
+    }
+    return navigation;
+}
+
 var renderNavigations = function(ctrl, phrase) {
-    return m('.row.phase-navigations', [
-        renderNavigation(ctrl, phrase, 'previous', 'Previous'),
-        renderNavigation(ctrl, phrase, 'next', 'Next')
+    let stepBackward = m('span.glyphicon.glyphicon-step-backward');
+    let backward = m('span.glyphicon.glyphicon-backward');
+    let stepForward = m('span.glyphicon.glyphicon-step-forward');
+    let forward = m('span.glyphicon.glyphicon-forward');
+    return m('.phase-navigations', [
+        renderSectionNavigation(ctrl, phrase, 'previous', stepBackward),
+        renderNavigation(ctrl, phrase, 'previous', backward),
+        renderRandomButton(ctrl),
+        renderNavigation(ctrl, phrase, 'next', forward),
+        renderSectionNavigation(ctrl, phrase, 'next', stepForward)
     ]);
 }
 
 var renderSectionTitle = function(ctrl, phrase) {
-    let text = `${phrase.section} (${phrase.id})`;
+    let text = `${phrase.section.name} (${phrase.id})`;
     return m('.section-title', m('p', text));
 }
 
@@ -110,6 +150,8 @@ export default {
     view: (ctrl, args) => {
         let phrase = ctrl.duo().index[ctrl.id];
         return m('.container-fluid', [
+            renderSectionTitle(ctrl, phrase),
+            renderNavigations(ctrl, phrase),
             m('.row', [
                 renderLangButtons(ctrl, phrase),
                 renderAudio(ctrl, phrase),
@@ -118,9 +160,7 @@ export default {
                     renderJa(ctrl, phrase),
                     renderNone(ctrl, phrase)
                 ])
-            ]),
-            renderSectionTitle(ctrl, phrase),
-            renderNavigations(ctrl, phrase)
+            ])
         ]);
     }
 };

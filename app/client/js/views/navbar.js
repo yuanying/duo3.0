@@ -1,17 +1,5 @@
 import m from 'mithril';
 
-var renderRandomButton = function(ctrl) {
-    let redirectRandom = function() {
-        let phrases = ctrl.duo().phrases;
-        let random = phrases[Math.floor(Math.random() * phrases.length)];
-        m.route(`/${ctrl.lang()}/phrase/${random.id}`);
-    }
-    return m('span', m('a.glyphicon.glyphicon-random', {
-        href: '#',
-        onclick: redirectRandom
-    }));
-}
-
 var renderLangButton = function(ctrl) {
     var classNames = "glyphicon glyphicon-bullhorn";
     var url = "/en";
@@ -46,7 +34,6 @@ const NavBar = {
                 href: `/${ctrl.lang()}`,
                 config: m.route
             }, args.title)),
-            renderRandomButton(ctrl),
             renderLangButton(ctrl),
         ]));
     }
