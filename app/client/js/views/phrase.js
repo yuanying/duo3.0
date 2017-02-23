@@ -58,12 +58,24 @@ var renderLangButton = function(ctrl, lang, phrase) {
 };
 
 var renderLangButtons = function(ctrl, phrase) {
-    return m('ul.nav.nav-tabs[role="tablist"]', [
+    return m('.tabs-below', m('ul.nav.nav-tabs[role="tablist"]', [
         renderLangButton(ctrl, 'en', phrase),
         renderLangButton(ctrl, 'ja', phrase),
         renderLangButton(ctrl, 'none', phrase)
-    ]);
+    ]));
 };
+
+var renderPlayButton = function(ctrl, phrase) {
+    let playPhrase = function() {
+        let audio = document.getElementById(`audio-${phrase.id}`);
+        audio.play();
+        return false;
+    }
+    return m('a', {
+        href: '#',
+        onclick: playPhrase
+    }, m('.phase-navigation.play', m('span.glyphicon.glyphicon-play')));
+}
 
 var renderRandomButton = function(ctrl) {
     let redirectRandom = function() {
@@ -118,9 +130,10 @@ var renderNavigations = function(ctrl, phrase) {
     let stepForward = m('span.glyphicon.glyphicon-step-forward');
     let forward = m('span.glyphicon.glyphicon-forward');
     return m('.phase-navigations', [
+        renderPlayButton(ctrl, phrase),
+        renderRandomButton(ctrl),
         renderSectionNavigation(ctrl, phrase, 'previous', stepBackward),
         renderNavigation(ctrl, phrase, 'previous', backward),
-        renderRandomButton(ctrl),
         renderNavigation(ctrl, phrase, 'next', forward),
         renderSectionNavigation(ctrl, phrase, 'next', stepForward)
     ]);
@@ -132,7 +145,17 @@ var renderSectionTitle = function(ctrl, phrase) {
 }
 
 var renderAudio = function(ctrl, phrase) {
-    return m('.audio', m('audio[controls=controls]', { src: `resources/${phrase.path}`}));
+    return m('.audio', m('audio[controls=controls]', {
+        src: `resources/${phrase.path}`,
+        id: `audio-${phrase.id}`
+    }));
+}
+
+var renderFooter = function(ctrl, phrase) {
+    return m('.footer', [
+        renderLangButtons(ctrl, phrase),
+        renderNavigations(ctrl, phrase)
+    ]);
 }
 
 export default {
@@ -153,7 +176,6 @@ export default {
                 m('.container-fluid', [
                 renderSectionTitle(ctrl, phrase),
                 m('.row', [
-                    renderLangButtons(ctrl, phrase),
                     renderAudio(ctrl, phrase),
                     m('.tab-content', [
                         renderEn(ctrl, phrase),
@@ -162,7 +184,7 @@ export default {
                     ])
                 ]),
             ]),
-            renderNavigations(ctrl, phrase)
+            renderFooter(ctrl, phrase)
         ];
     }
 };

@@ -84,10 +84,18 @@ span.lang {
   /*margin-bottom: em*/
 }
 
-.phase-navigations {
+.footer {
   position: fixed;
-  width: 100%;
   bottom: 0;
+  width: 100%;
+}
+
+.tabs-below {
+  margin: 1em;
+}
+
+.phase-navigations {
+  width: 100%;
   color: #ccc;
   text-align: center;
   margin: 0;
@@ -95,7 +103,41 @@ span.lang {
   border-top: 1px solid #eee;
 }
 .phase-navigation {
+  vertical-align: middle;
   display: inline-block;
-  padding: 0 0.2em;
   margin: 0 1em;
+}
+
+.phase-navigation.play {
+  font-size: 2em;
+  margin: 0 0.2em;
+}
+
+/* Support tabs-below */
+
+.tabs-below > .nav-tabs {
+  border-bottom: 0;
+}
+
+.tabs-below > .nav-tabs {
+  border-top: 1px solid #ddd;
+}
+.tabs-below > .nav-tabs > li {
+  margin-top: -1px;
+  margin-bottom: 0;
+}
+.tabs-below > .nav-tabs > li > a {
+  -webkit-border-radius: 0 0 4px 4px;
+     -moz-border-radius: 0 0 4px 4px;
+          border-radius: 0 0 4px 4px;
+}
+.tabs-below > .nav-tabs > li > a:hover,
+.tabs-below > .nav-tabs > li > a:focus {
+  border-top-color: #ddd;
+  border-bottom-color: transparent;
+}
+.tabs-below > .nav-tabs > .active a,
+.tabs-below > .nav-tabs > .active a:hover,
+.tabs-below > .nav-tabs > .active a:focus {
+  border-color: transparent #ddd #ddd #ddd;
 }
