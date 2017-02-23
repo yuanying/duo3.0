@@ -1,0 +1,97 @@
+
+.duo-nav {
+  margin-bottom: 10px;
+  vertical-align: bottom;
+  background-color: #428bca;
+  -webkit-box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+          box-shadow: inset 0 -2px 5px rgba(0,0,0,.1);
+}
+.duo-nav span {
+  position: relative;
+  display: inline-block;
+  padding: 10px 16px;
+  font-weight: 500;
+  color: #fff;
+  /*color: #cdddeb;*/
+}
+.duo-nav span.active {
+  -webkit-box-shadow: inset 0 -2px 30px rgba(0,0,0,.2);
+          box-shadow: inset 0 -2px 30px rgba(0,0,0,.2);
+}
+.duo-nav span.active a {
+  color: #ff0;
+  background-color: #428bca;
+}
+.duo-nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.duo-nav .home:after {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  margin-left: -5px;
+  vertical-align: middle;
+  content: " ";
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid;
+  border-left: 5px solid transparent;
+}
+
+span.lang {
+  float: right;
+}
+
+.container-fluid {
+  margin: 0 1em;
+}
+
+.btn {
+  border-radius: 0.4em;
+  margin: 0 0.4em;
+}
+
+.phrase-tab {
+  padding: 0 1.5em 1.5em 1.5em;
+}
+.text {
+  font-size: 1.5em;
+  padding: 0;
+}
+
+.none {
+  text-align: center;
+  color: #999;
+}
+.none .text {
+  font-size: 4em;
+}
+
+.audio {
+  text-align: center;
+  padding: 1em 0 0.4em 0;
+  margin: auto;
+}
+
+.section-title {
+  text-align: right;
+  color: #999;
+}
+
+.phase-navigations {
+  color: #ccc;
+  text-align: center;
+  margin: 1em 0;
+  padding: 1em;
+  border-top: 1px solid #eee;
+}
+
+.phase-navigations .previous:before {
+  content: "« ";
+}
+.phase-navigations .next:after {
+  content: " »";
+}

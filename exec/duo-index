@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+require 'id3lib'
+require 'erb'
+require 'json'
+
+
+resources_dir = File.join(File.dirname(__FILE__), '..', 'public', 'resources')
+mp3s = File.join(resources_dir, '**', '*.mp3')
+index_js = File.join(resources_dir, 'index.js')
+phrases_js = File.join(resources_dir, 'phrases.js')
+sections_js = File.join(resources_dir, 'sections.js')
+
+index = []
+phrases = {}
+sections = []
+
+Dir.glob(mp3s).each do |mp3|
+  # puts mp3
+  tag = ID3Lib::Tag.new(mp3)
+
+  lyrics = tag.lyrics.encode("UTF-8", "UTF-16BE").gsub(/\r/, "\n")#, :undef => :replace, :invalid => :replace)
+  lyrics = lyrics.split(/\n\n/)
+  # puts lyrics[1]
+  if lyrics.size  < 2
+    puts "ERROR1: #{lyrics}"
+  elsif lyrics.size > 3
+    puts lyrics.size
+    puts "ERROR2: #{lyrics}"
+  end
+
+  english, japanease = lyrics
+  section, basename = mp3.split('/')[-2, 2]
+  if number = basename.match(/\d+\sDuo-(\d+)\.mp3/)
+    number = number[1].to_i
+  else
+    raise "Illegal basename #{basename}"
+  end
+  path = [ERB::Util.u(section), ERB::Util.u(basename)].join('/')
+  index << {
+    id: number,
+    ja: japanease,
+    en: english,
+    section: section,
+    basename: basename,
+    path: path
+  }
+end
+
+open(index_js, 'w') do |io|
+  # io.write('var index = ' + JSON.pretty_generate(index) + ';')
+  io.write(JSON.pretty_generate(index));
+end
