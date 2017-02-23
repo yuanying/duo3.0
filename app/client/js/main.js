@@ -29,3 +29,10 @@ m.route(document.getElementById('root'), '/', {
 m.mount(document.getElementById('navbar'),
     m.component(NavBar, {title: 'Duo3.0', duo: Duo.data, lang: lang, phrase: phrase })
 );
+
+if (m.route().split('/')[1] != 'phrase') {
+    let previousUrl = localStorage.getItem('previousUrl');
+    if (previousUrl) {
+        m.route(previousUrl);
+    }
+}

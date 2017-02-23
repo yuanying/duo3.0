@@ -163,6 +163,7 @@ export default {
         args.lang(m.route.param("lang"));
         let id = parseInt(m.route.param("id"));
         args.phrase(id);
+        localStorage.setItem('previousUrl', m.route());
 
         return {
             lang: args.lang,
