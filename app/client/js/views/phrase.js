@@ -173,7 +173,7 @@ export default {
     view: (ctrl, args) => {
         let phrase = ctrl.duo().index[ctrl.id];
         return [
-                m('.container-fluid', [
+            m('.container-fluid', [
                 renderSectionTitle(ctrl, phrase),
                 m('.row', [
                     renderAudio(ctrl, phrase),
