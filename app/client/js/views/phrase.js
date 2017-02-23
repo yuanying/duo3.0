@@ -145,10 +145,14 @@ var renderSectionTitle = function(ctrl, phrase) {
 }
 
 var renderAudio = function(ctrl, phrase) {
-    return m('.audio', m('audio[controls=controls]', {
+    let attr = {
         src: `resources/${phrase.path}`,
         id: `audio-${phrase.id}`
-    }));
+    }
+    if (ctrl.lang() == 'none') {
+        attr['autoplay'] = 'autoplay'
+    }
+    return m('.audio', m('audio[controls=controls]', attr));
 }
 
 var renderFooter = function(ctrl, phrase) {
