@@ -71,10 +71,10 @@ var renderRandomButton = function(ctrl) {
         let random = phrases[Math.floor(Math.random() * phrases.length)];
         m.route(`/${ctrl.lang()}/phrase/${random.id}`);
     }
-    return m('.phase-navigation', m('a.glyphicon.glyphicon-random', {
+    return m('a', {
         href: '#',
         onclick: redirectRandom
-    }));
+    }, m('.phase-navigation', m('span.glyphicon.glyphicon-random')));
 }
 
 var renderNavigation = function(ctrl, phrase, direction, caption) {
@@ -149,18 +149,20 @@ export default {
     },
     view: (ctrl, args) => {
         let phrase = ctrl.duo().index[ctrl.id];
-        return m('.container-fluid', [
-            renderSectionTitle(ctrl, phrase),
-            renderNavigations(ctrl, phrase),
-            m('.row', [
-                renderLangButtons(ctrl, phrase),
-                renderAudio(ctrl, phrase),
-                m('.tab-content', [
-                    renderEn(ctrl, phrase),
-                    renderJa(ctrl, phrase),
-                    renderNone(ctrl, phrase)
-                ])
-            ])
-        ]);
+        return [
+                m('.container-fluid', [
+                renderSectionTitle(ctrl, phrase),
+                m('.row', [
+                    renderLangButtons(ctrl, phrase),
+                    renderAudio(ctrl, phrase),
+                    m('.tab-content', [
+                        renderEn(ctrl, phrase),
+                        renderJa(ctrl, phrase),
+                        renderNone(ctrl, phrase)
+                    ])
+                ]),
+            ]),
+            renderNavigations(ctrl, phrase)
+        ];
     }
 };

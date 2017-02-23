@@ -81,14 +81,17 @@ span.lang {
   color: #999;
 }
 .section-title p {
-  margin-bottom: 0.2em
+  /*margin-bottom: em*/
 }
 
 .phase-navigations {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
   color: #ccc;
   text-align: center;
   margin: 0;
-  padding: 0.2em 0 1em 0;
+  padding: 1em 0 1em 0;
   border-top: 1px solid #eee;
 }
 .phase-navigation {
