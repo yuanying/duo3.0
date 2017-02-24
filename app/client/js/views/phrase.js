@@ -65,28 +65,40 @@ var renderLangButtons = function(ctrl, phrase) {
     ]));
 };
 
-var renderPlayButton = function(ctrl, phrase) {
-    let playPhrase = function() {
+var createPlayPhraseHandler = function(ctrl, phrase) {
+    return function() {
         let audio = document.getElementById(`audio-${phrase.id}`);
         audio.play();
         return false;
     }
-    return m('a', {
+}
+
+var renderPlayButton = function(ctrl, phrase) {
+    return m('a[title="key:\'p\'"]', {
         href: '#',
-        onclick: playPhrase
+        onclick: createPlayPhraseHandler(ctrl, phrase)
     }, m('.phase-navigation.play', m('span.glyphicon.glyphicon-play')));
 }
 
-var renderRandomButton = function(ctrl) {
-    let redirectRandom = function() {
+var createRedirectRandomHandler = function(ctrl, phrase) {
+    return function() {
         let phrases = ctrl.duo().phrases;
         let random = phrases[Math.floor(Math.random() * phrases.length)];
         m.route(`/${ctrl.lang()}/phrase/${random.id}`);
+        return false;
     }
-    return m('a', {
+}
+
+var renderRandomButton = function(ctrl, phrase) {
+    return m('a[title="key:\'r\'"]', {
         href: '#',
-        onclick: redirectRandom
+        onclick: createRedirectRandomHandler(ctrl, phrase)
     }, m('.phase-navigation', m('span.glyphicon.glyphicon-random')));
+}
+
+var directionMap = {
+    'next': '→',
+    'previous': '←'
 }
 
 var renderNavigation = function(ctrl, phrase, direction, caption) {
@@ -96,7 +108,11 @@ var renderNavigation = function(ctrl, phrase, direction, caption) {
     );
     if (phrase[direction]) {
         navigation = m('a',
-            { href: `/${ctrl.lang()}/phrase/${phrase[direction].id}`, config: m.route },
+            {
+                href: `/${ctrl.lang()}/phrase/${phrase[direction].id}`,
+                config: m.route,
+                title: `key:'${directionMap[direction]}'`
+            },
             navigation
         )
     }
@@ -131,7 +147,7 @@ var renderNavigations = function(ctrl, phrase) {
     let forward = m('span.glyphicon.glyphicon-forward');
     return m('.phase-navigations', [
         renderPlayButton(ctrl, phrase),
-        renderRandomButton(ctrl),
+        renderRandomButton(ctrl, phrase),
         renderSectionNavigation(ctrl, phrase, 'previous', stepBackward),
         renderNavigation(ctrl, phrase, 'previous', backward),
         renderNavigation(ctrl, phrase, 'next', forward),
@@ -162,6 +178,34 @@ var renderFooter = function(ctrl, phrase) {
     ]);
 }
 
+var createEventHandler = function(ctrl, phrase) {
+    return function(el, isInitialized, context) {
+        let keyupHook = function(event) {
+            if (event.keyCode == 39) {
+                // Move next `key ->`
+                m.route(`/${ctrl.lang()}/phrase/${phrase.next.id}`);
+                return false;
+            } else if (event.keyCode == 37) {
+                // Move previous `key <-`
+                m.route(`/${ctrl.lang()}/phrase/${phrase.previous.id}`);
+                return false;
+            } else if (event.keyCode == 80) {
+                // Play phrase `key p`
+                return createPlayPhraseHandler(ctrl, phrase)();
+            } else if (event.keyCode == 82) {
+                // Move random phrase `key r`
+                return createRedirectRandomHandler(ctrl, phrase)();
+            }
+        }
+        if (!isInitialized) {
+            document.addEventListener('keyup', keyupHook);
+            context.onunload = () => {
+                document.removeEventListener('keyup', keyupHook);
+            }
+        }
+    }
+}
+
 export default {
     controller: (args) => {
         args.lang(m.route.param("lang"));
@@ -178,7 +222,9 @@ export default {
     view: (ctrl, args) => {
         let phrase = ctrl.duo().index[ctrl.id];
         return [
-            m('.container-fluid', [
+            m('.container-fluid', {
+                config: createEventHandler(ctrl, phrase)
+            }, [
                 renderSectionTitle(ctrl, phrase),
                 m('.row', [
                     renderAudio(ctrl, phrase),
