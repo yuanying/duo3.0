@@ -88,6 +88,10 @@ span.lang {
   content: ", ";
 }
 
+.an_trans {
+  margin-left: 1em;
+}
+
 span.synonyms:before {
   content: "("
 }
