@@ -84,14 +84,19 @@ span.lang {
   /*margin-bottom: em*/
 }
 
+.phrase .contents {
+  padding-bottom: 7em;
+}
+
 .footer {
   position: fixed;
   bottom: 0;
   width: 100%;
+  background-color: #fff;
 }
 
 .tabs-below {
-  margin: 1em;
+  margin: 0 1em 1em 1em;
 }
 
 .phase-navigations {

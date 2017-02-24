@@ -223,11 +223,11 @@ export default {
     view: (ctrl, args) => {
         let phrase = ctrl.duo().index[ctrl.id];
         return [
-            m('.container-fluid', {
+            m('.container-fluid.phrase', {
                 config: createEventHandler(ctrl, phrase)
             }, [
                 renderSectionTitle(ctrl, phrase),
-                m('.row', [
+                m('.row.contents', [
                     renderAudio(ctrl, phrase),
                     m('.tab-content', [
                         renderEn(ctrl, phrase),
