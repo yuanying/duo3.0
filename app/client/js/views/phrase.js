@@ -97,8 +97,8 @@ var renderRandomButton = function(ctrl, phrase) {
 }
 
 var directionMap = {
-    'next': '→',
-    'previous': '←'
+    'next': 'j',
+    'previous': 'k'
 }
 
 var renderNavigation = function(ctrl, phrase, direction, caption) {
@@ -181,12 +181,13 @@ var renderFooter = function(ctrl, phrase) {
 var createEventHandler = function(ctrl, phrase) {
     return function(el, isInitialized, context) {
         let keyupHook = function(event) {
-            if (event.keyCode == 39) {
-                // Move next `key ->`
+            console.log(event);
+            if (event.keyCode == 39 || event.keyCode == 74) {
+                // Move next `key -> / j`
                 m.route(`/${ctrl.lang()}/phrase/${phrase.next.id}`);
                 return false;
-            } else if (event.keyCode == 37) {
-                // Move previous `key <-`
+            } else if (event.keyCode == 37 || event.keyCode == 75) {
+                // Move previous `key <- / k`
                 m.route(`/${ctrl.lang()}/phrase/${phrase.previous.id}`);
                 return false;
             } else if (event.keyCode == 80) {
