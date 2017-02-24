@@ -1,5 +1,4 @@
 import m from 'mithril';
-import $ from 'jquery'
 import 'bootstrap';
 
 import Duo from './models/duo'
@@ -18,7 +17,12 @@ var lang = m.prop("en");
 var phrase = m.prop("");
 
 const homeView = m.component(Home, { duo: Duo.data, lang: lang, phrase: phrase });
-const phraseView = m.component(Phrase, { duo: Duo.data, lang: lang, phrase: phrase });
+const phraseView = m.component(Phrase, {
+    duo: Duo.data,
+    words: Duo.words,
+    lang: lang,
+    phrase: phrase
+});
 
 m.route(document.getElementById('root'), '/', {
     '/': homeView,

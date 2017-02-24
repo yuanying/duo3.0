@@ -39,6 +39,75 @@ var renderNone = function(ctrl, phrase) {
     );
 }
 
+var renderRelatedWordLink = function(ctrl, word) {
+    let link = ctrl.words().dict(word);
+    if (link) {
+        return m('a', {
+            href: `/${ctrl.lang()}/phrases/${link.phrase_id}`
+        }, word);
+    }
+    return word;
+}
+
+var renderSynonyms = function(ctrl, phrase, synonyms) {
+    return m('span.synonyms', synonyms.join(', '));
+}
+
+var renderAntonyms = function(ctrl, phrase, antonyms) {
+    let translation = antonyms.translation;
+    let words = antonyms.words;
+    let contents = [ words.join(',') ];
+    if (translation) {
+        contents.push(m('span.an_trans', translation));
+    }
+    return m('span.antonyms', contents);
+}
+
+var renderWordDetail = function(ctrl, phrase, word) {
+    let detail = [m('span.translation', word.translation)]
+    if (word.synonyms) {
+        detail.push(renderSynonyms(ctrl, phrase, word.synonyms));
+    }
+    if (word.antonyms) {
+        detail.push(renderAntonyms(ctrl, phrase, word.antonyms));
+    }
+    return m('dd', detail);
+}
+
+var renderWordNotes = function(ctrl, phrase, word) {
+    if (word.notes) {
+        return m('dd.note', m('ul', word.notes.map((note) => {
+            return m('li', note);
+        })));
+    }
+    return "";
+}
+
+var renderWord = function(ctrl, phrase, word) {
+    return [
+        m('dt', word.word),
+        renderWordDetail(ctrl, phrase, word),
+        renderWordNotes(ctrl, phrase, word)
+    ];
+}
+
+var renderWords = function(ctrl, phrase) {
+    let words = ctrl.words().index[phrase.id];
+    if (words) {
+        return m('dl.words', words.map((word) => {
+            return renderWord(ctrl, phrase, word);
+        }));
+    }
+    return "";
+}
+
+var renderNote = function(ctrl, phrase) {
+    return m('.phrase-tab.tab-pane[role="tabpanel"]',
+        { id: `id-${phrase.id}-note`, class: "note" },
+        renderWords(ctrl, phrase)
+    );
+}
+
 var renderLangButton = function(ctrl, lang, phrase) {
     let className = "";
     let text = lang;
@@ -57,11 +126,22 @@ var renderLangButton = function(ctrl, lang, phrase) {
     );
 };
 
+var renderNoteButton = function(ctrl, phrase) {
+    return m('li[role="presentation"]',
+        { class: 'note' },
+        m('a[role="tab"][data-toggle="tab"]',
+            { href: `#id-${phrase.id}-note`, "aria-controls": `id-${phrase.id}-note` },
+            m('span.glyphicon.glyphicon-list-alt')
+        )
+    );
+}
+
 var renderLangButtons = function(ctrl, phrase) {
     return m('.tabs-below', m('ul.nav.nav-tabs[role="tablist"]', [
         renderLangButton(ctrl, 'en', phrase),
         renderLangButton(ctrl, 'ja', phrase),
-        renderLangButton(ctrl, 'none', phrase)
+        renderLangButton(ctrl, 'none', phrase),
+        renderNoteButton(ctrl, phrase)
     ]));
 };
 
@@ -217,7 +297,8 @@ export default {
         return {
             lang: args.lang,
             id: id,
-            duo: args.duo()
+            duo: args.duo(),
+            words: args.words()
         };
     },
     view: (ctrl, args) => {
@@ -232,7 +313,8 @@ export default {
                     m('.tab-content', [
                         renderEn(ctrl, phrase),
                         renderJa(ctrl, phrase),
-                        renderNone(ctrl, phrase)
+                        renderNone(ctrl, phrase),
+                        renderNote(ctrl, phrase)
                     ])
                 ]),
             ]),

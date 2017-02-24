@@ -13,28 +13,51 @@ var addSection = function(sections, phrase) {
     return lastSection;
 };
 
-export default {
-  data: () => {
-    return m.request({method: "GET", url: 'resources/index.js'}).then((list) => {
-        let sections = [];
-        let index = {};
-        let previous = null;
+var addPhrase = function(index, word) {
+    let phrase = index[word.phrase_id];
+    if (!phrase) {
+        phrase = [];
+        index[word.phrase_id] = phrase;
+    }
+    phrase.push(word);
+}
 
-        list.forEach((value) => {
-            let section = addSection(sections, value);
-            value.section = section;
-            index[value.id] = value;
-            if (previous) {
-                value.previous = previous;
-                previous.next = value;
-            }
-            previous = value;
+export default {
+    data: () => {
+        return m.request({method: "GET", url: 'resources/index.js'}).then((list) => {
+            let sections = [];
+            let index = {};
+            let previous = null;
+
+            list.forEach((value) => {
+                let section = addSection(sections, value);
+                value.section = section;
+                index[value.id] = value;
+                if (previous) {
+                    value.previous = previous;
+                    previous.next = value;
+                }
+                previous = value;
+            });
+            return {
+                sections: sections,
+                phrases: list,
+                index: index
+            };
         });
-        return {
-            sections: sections,
-            phrases: list,
-            index: index
-        };
-    });
-  }
+    },
+    words: () => {
+        return m.request({method: "GET", url: 'resources/words.js'}).then((words) => {
+            let dict = {};
+            let index = {};
+            words.forEach((word) => {
+                addPhrase(index, word);
+                dict[word.word] = word;
+            });
+            return {
+                dict: dict,
+                index: index
+            };
+        });
+    }
 };

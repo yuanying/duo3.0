@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+
+require 'json'
+
+resources_dir = File.join(File.dirname(__FILE__), '..', 'public', 'resources')
+scripts = File.join(resources_dir, 'scripts', '*.txt')
+
+words_js = File.join(resources_dir, 'words.js')
+
+def parse_id(paragraph)
+  paragraph.scan(/^\d+\./)[0].to_i
+end
+
+def parse_lines(paragraph)
+  lines = paragraph.split("\n")
+  lines.shift
+  lines.delete_if { |line| !(/^\w/ =~ line)  }
+  lines
+end
+
+def parse_antonyms(antonyms)
+  raise "Antonyms seems ambiguous: #{antonyms}" if antonyms.length > 1
+  antonyms = antonyms[0].split('　')
+  {
+    words: antonyms[0].split(/\s*\/\s*/),
+    translation: antonyms[1]
+  }
+end
+
+SYNONYMS = /[（]≒(.+?)[）]/
+ANTONYMS = /[（]⇔(.+?)[）]/
+NOTES = /【(.+?)】/
+
+def parse_line(line)
+  # puts '=================================='
+  # puts line
+  word = line.split(/　/, limit = 2)
+  synonyms = line.scan(SYNONYMS)
+  synonyms = synonyms.flatten(1)
+  synonyms = synonyms.map { |s| s.split(/\s*\/\s*/) }
+  synonyms = synonyms.flatten(1)
+  antonyms = line.scan(ANTONYMS).flatten(1)
+  notes = line.scan(NOTES).flatten(1)
+  # puts '---------------------'
+  # puts "Synonyms: #{synonyms}"
+  # puts '---------------------'
+  # puts "Antonyms: #{antonyms}"
+  if antonyms.length > 0
+    antonyms = parse_antonyms(antonyms)
+  else
+    antonyms = nil
+  end
+  # puts '---------------------'
+  # puts "Notes: #{notes}"
+  # puts '---------------------'
+  # puts "Word: #{word[0]}"
+  # puts '---------------------'
+  # p word
+  word[1] = word[1].gsub(SYNONYMS, '')
+  word[1] = word[1].gsub(ANTONYMS, '')
+  word[1] = word[1].gsub(NOTES, '')
+  # puts "Translation: #{word[1]}"
+  # p word[1]
+  detail = {
+    translation: word[1].gsub(/[[:space:]]+$/, '')
+  }
+  detail[:antonyms] = antonyms if antonyms
+  detail[:synonyms] = synonyms if synonyms.length > 0
+  detail[:notes] = notes if notes.length > 0
+  detail[:word] = word[0]
+  detail
+end
+
+def parse_paragraph(words, paragraph)
+  id = parse_id(paragraph)
+  parse_lines(paragraph).each do |line|
+    line = parse_line(line)
+    line[:phrase_id] = id
+    # dict[line[0]] = line[1]
+    words.push(line)
+  end
+end
+
+words = []
+Dir.glob(scripts).each do |script|
+  IO.foreach(script, rs = '') do |paragraph|
+    parse_paragraph( words, paragraph )
+  end
+end
+
+open(words_js, 'w') do |io|
+  # io.write('var index = ' + JSON.pretty_generate(index) + ';')
+  io.write(JSON.pretty_generate(words));
+end

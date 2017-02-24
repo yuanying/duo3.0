@@ -70,6 +70,39 @@ span.lang {
   font-size: 4em;
 }
 
+.words .note {
+  background-color: #ffc;
+  border: 1px solid #cc9;
+  padding: 0.4em;
+}
+.words .note ul {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.words dd {
+  margin-left: 1em;
+}
+
+span.synonyms:before {
+  content: "("
+}
+span.synonyms:after {
+  content: ")"
+}
+span.antonyms:before {
+  content: "(⇔ "
+}
+span.antonyms:after {
+  content: ")"
+}
+span.synonyms,
+span.antonyms {
+  color: #999;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+
 .audio {
   text-align: center;
   padding: 1em 0;
