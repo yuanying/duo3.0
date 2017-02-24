@@ -268,7 +268,6 @@ var renderFooter = function(ctrl, phrase) {
 var createEventHandler = function(ctrl, phrase) {
     return function(el, isInitialized, context) {
         let keyupHook = function(event) {
-            console.log(event);
             if (event.keyCode == 39 || event.keyCode == 74) {
                 // Move next `key -> / j`
                 m.route(`/${ctrl.lang()}/phrase/${phrase.next.id}`);
@@ -285,10 +284,37 @@ var createEventHandler = function(ctrl, phrase) {
                 return createRedirectRandomHandler(ctrl, phrase)();
             }
         }
+        let swipeLeftHook = function(event) {
+            // console.log('swipeleft')
+            // console.log(event.detail.x2 - event.detail.x1);
+            let absX = Math.abs(event.detail.x2 - event.detail.x1);
+            if ( absX > window.innerWidth / 4) {
+                window.history.forward();
+            }
+            return false;
+        }
+        let swipeRightHook = function(event) {
+            // console.log('swiperight')
+            // console.log(event.detail.x2 - event.detail.x1);
+            let absX = Math.abs(event.detail.x2 - event.detail.x1);
+            if ( absX > window.innerWidth / 4) {
+                window.history.back();
+            }
+            return false;
+        }
         if (!isInitialized) {
             document.addEventListener('keyup', keyupHook);
+            if (window.navigator.standalone) {
+                document.addEventListener('swipeleft', swipeLeftHook);
+                document.addEventListener('swiperight', swipeRightHook);
+            }
+
             context.onunload = () => {
                 document.removeEventListener('keyup', keyupHook);
+                if (window.navigator.standalone) {
+                    document.removeEventListener('swipeleft', swipeLeftHook);
+                    document.removeEventListener('swiperight', swipeRightHook);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 import m from 'mithril';
+require('./lib/mithril-touch');
 import 'bootstrap';
 
 import Duo from './models/duo'
