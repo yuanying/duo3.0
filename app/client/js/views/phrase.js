@@ -40,23 +40,30 @@ var renderNone = function(ctrl, phrase) {
 }
 
 var renderRelatedWordLink = function(ctrl, word) {
-    let link = ctrl.words().dict(word);
+    let link = ctrl.words().dict[word];
     if (link) {
         return m('a', {
-            href: `/${ctrl.lang()}/phrases/${link.phrase_id}`
+            href: `/${ctrl.lang()}/phrase/${link.phrase_id}`,
+            config: m.route
         }, word);
     }
     return word;
 }
 
+var renderRelatedWordLinks = function(ctrl, words) {
+    return words.map((word) => {
+        return m('span.word', renderRelatedWordLink(ctrl, word));
+    });
+}
+
 var renderSynonyms = function(ctrl, phrase, synonyms) {
-    return m('span.synonyms', synonyms.join(', '));
+    return m('span.synonyms', renderRelatedWordLinks(ctrl, synonyms));
 }
 
 var renderAntonyms = function(ctrl, phrase, antonyms) {
     let translation = antonyms.translation;
     let words = antonyms.words;
-    let contents = [ words.join(',') ];
+    let contents = [ renderRelatedWordLinks(ctrl, words) ];
     if (translation) {
         contents.push(m('span.an_trans', translation));
     }

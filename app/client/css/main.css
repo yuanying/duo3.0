@@ -84,6 +84,10 @@ span.lang {
   margin-left: 1em;
 }
 
+.word + .word:before {
+  content: ", ";
+}
+
 span.synonyms:before {
   content: "("
 }
