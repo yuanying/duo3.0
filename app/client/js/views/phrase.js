@@ -152,7 +152,7 @@ var renderLangButtons = function(ctrl, phrase) {
     ]));
 };
 
-var createPlayPhraseHandler = function(ctrl, phrase) {
+var createPlayAudioPhraseHandler = function(ctrl, phrase) {
     return function() {
         let audio = document.getElementById(`audio-${phrase.id}`);
         audio.play();
@@ -160,11 +160,28 @@ var createPlayPhraseHandler = function(ctrl, phrase) {
     }
 }
 
+var createStopAudioPhraseHandler = function(ctrl, phrase) {
+    return function() {
+        let audio = document.getElementById(`audio-${phrase.id}`);
+        audio.pause();
+        return false;
+    }
+}
+
 var renderPlayButton = function(ctrl, phrase) {
+    let icon = null;
+    let handler = null;
+    if (ctrl.audioStatus() == 'ended') {
+        icon = m('span.glyphicon.glyphicon-play');
+        handler = createPlayAudioPhraseHandler(ctrl, phrase);
+    } else {
+        icon = m('span.glyphicon.glyphicon-pause');
+        handler = createStopAudioPhraseHandler(ctrl, phrase);
+    }
     return m('a[title="key:\'p\'"]', {
         href: '#',
-        onclick: createPlayPhraseHandler(ctrl, phrase)
-    }, m('.phase-navigation.play', m('span.glyphicon.glyphicon-play')));
+        onclick: handler
+    }, m('.phase-navigation.play', icon));
 }
 
 var createRedirectRandomHandler = function(ctrl, phrase) {
@@ -258,10 +275,28 @@ var renderSectionTitle = function(ctrl, phrase) {
     return m('.section-title', m('p', text));
 }
 
+var createPlayingAudioHandler = function(ctrl, phrase) {
+    return function(event) {
+        ctrl.audioStatus("playing");
+        return false;
+    }
+}
+
+var createEndedAudioHandler = function(ctrl, phrase) {
+    return function(event) {
+        ctrl.audioStatus("ended");
+        return false;
+    }
+}
+
 var renderAudio = function(ctrl, phrase) {
     let attr = {
         src: `resources/${phrase.path}`,
-        id: `audio-${phrase.id}`
+        id: `audio-${phrase.id}`,
+        onplay: createPlayingAudioHandler(ctrl, phrase),
+        onplaying: createPlayingAudioHandler(ctrl, phrase),
+        onended: createEndedAudioHandler(ctrl, phrase),
+        onpause: createEndedAudioHandler(ctrl, phrase)
     }
     if (ctrl.lang() == 'none') {
         attr['autoplay'] = 'autoplay'
@@ -289,7 +324,11 @@ var createEventHandler = function(ctrl, phrase) {
                 return false;
             } else if (event.keyCode == 80) {
                 // Play phrase `key p`
-                return createPlayPhraseHandler(ctrl, phrase)();
+                if (ctrl.audioStatus() == 'ended') {
+                    return createPlayAudioPhraseHandler(ctrl, phrase)();
+                } else {
+                    return createStopAudioPhraseHandler(ctrl, phrase)();
+                }
             } else if (event.keyCode == 82) {
                 // Move random phrase `key r`
                 return createRedirectRandomHandler(ctrl, phrase)();
@@ -337,12 +376,14 @@ export default {
         let id = parseInt(m.route.param("id"));
         args.phrase(id);
         localStorage.setItem('previousUrl', m.route());
+        let audioStatus = m.prop("ended");
 
         return {
             lang: args.lang,
             id: id,
             duo: args.duo(),
-            words: args.words()
+            words: args.words(),
+            audioStatus: audioStatus
         };
     },
     view: (ctrl, args) => {
