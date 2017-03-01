@@ -206,24 +206,35 @@ var renderNavigation = function(ctrl, phrase, direction, caption) {
     return navigation;
 }
 
+var firstOrLastPhaseInSection = function(ctrl, phrase, direction) {
+    if (phrase) {
+        let phrases = phrase.section.phrases;
+        if (direction == 'previous') {
+            return phrases[0];
+        } else {
+            return phrases[phrases.length - 1];
+        }
+    }
+    return null;
+}
+
 var renderSectionNavigation = function(ctrl, phrase, direction, caption) {
     let navigation = m('.phase-navigation',
         { class: direction },
         caption
     );
-    let targetPhrase = null;
-    let phrases = phrase.section.phrases;
-    if (direction == 'previous') {
-        targetPhrase = phrases[0];
-    } else {
-        targetPhrase = phrases[phrases.length - 1];
+    let targetPhrase = firstOrLastPhaseInSection(ctrl, phrase, direction);
+    if (targetPhrase.id == phrase.id) {
+        targetPhrase = firstOrLastPhaseInSection(ctrl, phrase[direction], direction);
     }
-    if (phrase[direction]) {
+
+    if (targetPhrase) {
         navigation = m('a',
             { href: `/${ctrl.lang()}/phrase/${targetPhrase.id}`, config: m.route },
             navigation
         )
     }
+
     return navigation;
 }
 
