@@ -235,15 +235,24 @@ var firstOrLastPhaseInSection = function(ctrl, phrase, direction) {
     return null;
 }
 
+var stepForwardOrBackwordPhrase = function(ctrl, phrase, direction) {
+    let targetPhrase = firstOrLastPhaseInSection(ctrl, phrase, direction);
+    if (targetPhrase.id == phrase.id) {
+        let nextDirection = 'previous';
+        if (direction == 'previous') {
+            nextDirection = 'next';
+        }
+        targetPhrase = firstOrLastPhaseInSection(ctrl, phrase[direction], nextDirection);
+    }
+    return targetPhrase;
+}
+
 var renderSectionNavigation = function(ctrl, phrase, direction, caption) {
     let navigation = m('.phase-navigation',
         { class: direction },
         caption
     );
-    let targetPhrase = firstOrLastPhaseInSection(ctrl, phrase, direction);
-    if (targetPhrase.id == phrase.id) {
-        targetPhrase = firstOrLastPhaseInSection(ctrl, phrase[direction], direction);
-    }
+    let targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, direction);
 
     if (targetPhrase) {
         navigation = m('a',
@@ -314,6 +323,7 @@ var renderFooter = function(ctrl, phrase) {
 var createEventHandler = function(ctrl, phrase) {
     return function(el, isInitialized, context) {
         let keyupHook = function(event) {
+            let targetPhrase = null;
             if (event.keyCode == 39 || event.keyCode == 74) {
                 // Move next `key -> / j`
                 m.route(`/${ctrl.lang()}/phrase/${phrase.next.id}`);
@@ -321,6 +331,16 @@ var createEventHandler = function(ctrl, phrase) {
             } else if (event.keyCode == 37 || event.keyCode == 75) {
                 // Move previous `key <- / k`
                 m.route(`/${ctrl.lang()}/phrase/${phrase.previous.id}`);
+                return false;
+            } else if (event.keyCode == 72) {
+                // Move step previous `key h`
+                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'previous');
+                m.route(`/${ctrl.lang()}/phrase/${targetPhrase.id}`);
+                return false;
+            } else if (event.keyCode == 76) {
+                // Move previous next `key l`
+                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'next');
+                m.route(`/${ctrl.lang()}/phrase/${targetPhrase.id}`);
                 return false;
             } else if (event.keyCode == 80) {
                 // Play phrase `key p`
