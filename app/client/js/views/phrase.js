@@ -155,6 +155,7 @@ var renderLangButtons = function(ctrl, phrase) {
 var createPlayAudioPhraseHandler = function(ctrl, phrase) {
     return function() {
         let audio = document.getElementById(`audio-${phrase.id}`);
+        audio.currentTime = 0;
         audio.play();
         return false;
     }
@@ -334,12 +335,12 @@ var createEventHandler = function(ctrl, phrase) {
                 return false;
             } else if (event.keyCode == 72) {
                 // Move step previous `key h`
-                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'previous');
+                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'next');
                 m.route(`/${ctrl.lang()}/phrase/${targetPhrase.id}`);
                 return false;
             } else if (event.keyCode == 76) {
                 // Move previous next `key l`
-                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'next');
+                targetPhrase = stepForwardOrBackwordPhrase(ctrl, phrase, 'previous');
                 m.route(`/${ctrl.lang()}/phrase/${targetPhrase.id}`);
                 return false;
             } else if (event.keyCode == 80) {
