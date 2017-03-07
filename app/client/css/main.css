@@ -112,9 +112,7 @@ span.antonyms {
 }
 
 .audio {
-  text-align: center;
-  padding: 1em 0;
-  margin: auto;
+  display: none;
 }
 
 .section-title {
