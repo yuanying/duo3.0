@@ -164,7 +164,14 @@ var createPlayAudioPhraseHandler = function(ctrl, phrase) {
 var createStopAudioPhraseHandler = function(ctrl, phrase) {
     return function() {
         let audio = document.getElementById(`audio-${phrase.id}`);
-        audio.pause();
+        let duration = audio.duration;
+        let currentTime = audio.currentTime;
+        if (duration - currentTime < 2) {
+            audio.currentTime = 0;
+            audio.play();
+        } else {
+            audio.pause();
+        }
         return false;
     }
 }
