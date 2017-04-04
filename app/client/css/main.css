@@ -119,12 +119,27 @@ span.antonyms {
   display: none;
 }
 
+.phrase .breadcrumb {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+.breadcrumb .phrase-nav {
+  border: 1px solid #ccc;
+  padding: 4px;
+  margin: 1px 2px;
+}
+
+.breadcrumb .phrase-nav.current {
+  background-color: #fcc;
+}
+
 .section-title {
   text-align: center;
   color: #999;
 }
 .section-title p {
-  /*margin-bottom: em*/
+  margin-bottom: 0;
 }
 
 .phrase .contents {

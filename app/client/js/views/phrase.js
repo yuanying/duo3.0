@@ -289,7 +289,10 @@ var renderNavigations = function(ctrl, phrase) {
 
 var renderSectionTitle = function(ctrl, phrase) {
     let text = `${phrase.section.name} (${phrase.id})`;
-    return m('.section-title', m('p', text));
+    return m('.section-title', [
+        m('p', text),
+        renderSectionBreadcrumb(ctrl, phrase)
+    ]);
 }
 
 var createPlayingAudioHandler = function(ctrl, phrase) {
@@ -319,6 +322,18 @@ var renderAudio = function(ctrl, phrase) {
         attr['autoplay'] = 'autoplay'
     }
     return m('.audio', m('audio[controls=controls]', attr));
+}
+
+var renderSectionBreadcrumb = function(ctrl, phrase) {
+    let phrases = phrase.section.phrases;
+    return m('.breadcrumb', phrases.map((_phrase) => {
+        let attr = {
+            class: _phrase.id == phrase.id ? 'current' : '',
+            href: `/${ctrl.lang()}/phrase/${_phrase.id}`,
+            config: m.route,
+        };
+        return m('a.phrase-nav', attr, ' ')
+    }));
 }
 
 var renderFooter = function(ctrl, phrase) {
