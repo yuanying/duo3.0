@@ -1,5 +1,25 @@
 import m from 'mithril';
 
+var renderRightControl = function(ctrl) {
+    return m('.control', [
+        renderFavButton(ctrl),
+        renderLangButton(ctrl),
+    ]);
+}
+
+var renderFavButton = function(ctrl) {
+    if (ctrl.id() == '') {
+        return '';
+    }
+    var classNames = "glyphicon glyphicon-star-empty";
+    var url = "#";
+
+    return m('span.fav', m('a', {
+        class: classNames,
+        href: url
+    }));
+}
+
 var renderLangButton = function(ctrl) {
     var classNames = "glyphicon glyphicon-bullhorn";
     var url = "/en";
@@ -34,7 +54,7 @@ const NavBar = {
                 href: `/${ctrl.lang()}`,
                 config: m.route
             }, args.title)),
-            renderLangButton(ctrl),
+            renderRightControl(ctrl),
         ]));
     }
 }

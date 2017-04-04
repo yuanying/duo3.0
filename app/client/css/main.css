@@ -41,8 +41,12 @@
   border-left: 5px solid transparent;
 }
 
-span.lang {
+div.control {
+  display: inline-block;
   float: right;
+}
+.duo-nav div.control span {
+  padding: 10px 16px 10px 8px;
 }
 
 .container-fluid {
